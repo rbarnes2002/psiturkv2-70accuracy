@@ -6,66 +6,64 @@ var mycounterbalance = counterbalance;
 // The current simulation contains Berth 1 and Berth 2 only.
 var numberOfBerths = 2;
 
+// Global experiment timer management
+var experimentIntervals = [];
+var experimentTimeouts = [];
+var experimentEnded = false;
+
+function startExperimentInterval(callback, delay) {
+    var id = setInterval(function () {
+        if (!experimentEnded) {
+            callback();
+        }
+    }, delay);
+
+    experimentIntervals.push(id);
+    return id;
+}
+
+function startExperimentTimeout(callback, delay) {
+    var id = setTimeout(function () {
+        if (!experimentEnded) {
+            callback();
+        }
+    }, delay);
+
+    experimentTimeouts.push(id);
+    return id;
+}
+
+function stopExperimentTimers() {
+    experimentEnded = true;
+
+    experimentIntervals.forEach(function (id) {
+        clearInterval(id);
+    });
+
+    experimentTimeouts.forEach(function (id) {
+        clearTimeout(id);
+    });
+
+    experimentIntervals = [];
+    experimentTimeouts = [];
+
+    // Remove experiment keyboard handlers.
+    $(document).off("keypress.nback");
+    $(document).off("keypress.workloadLock");
+
+    // Restore the workload-screen interaction state.
+    $("body").removeClass("workload-active");
+    $(".js-button").prop("disabled", false);
+
+    $("#msg1, #msg2, #experiment-controls")
+        .prop("inert", false)
+        .removeAttr("aria-hidden");
+}
 
 /*var numbers = [0,1,2,3,4,5,6,7,8];
 mycondition = Math.floor(Math.random() * numbers.length);*/
 
-
-if (mycondition%9 == 0)
-{  condition = 0; 
-//psiTurk.recordTrialData({'phase':'condition', 'status':'0'});
-}
-
-else if (mycondition%9 == 1) 
-        { condition = 1;
-//psiTurk.recordTrialData({'phase':'condition', 'status':'1'});        
-        }
-        
-        
-else if (mycondition%9 == 2) 
-        { condition = 2;
-        
-//psiTurk.recordTrialData({'phase':'condition', 'status':'2'});        
-        
-        } 
-        
-else if (mycondition%9 == 3) 
-        { condition = 3;
-        
-//psiTurk.recordTrialData({'phase':'condition', 'status':'3'});        
-        
-        }        
-        
-else if (mycondition%9 == 4) 
-        { condition = 4;
-        
-//psiTurk.recordTrialData({'phase':'condition', 'status':'4'});        
-        }       
-
-else if (mycondition%9 == 5)
-        { condition == 5;
-        
-//psiTurk.recordTrialData({'phase':'condition', 'status':'5'});        
-        }
-           
-else if (mycondition%9 == 6)
-        { condition == 6;
-        
-//psiTurk.recordTrialData({'phase':'condition', 'status':'6'});        
-        }          
-
-else if (mycondition%9 == 7)
-        { condition == 7;
-//psiTurk.recordTrialData({'phase':'condition', 'status':'7'});        
-        }
-
-else (mycondition%9 == 8)
-        { condition == 8;
-//psiTurk.recordTrialData({'phase':'condition', 'status':'8'});        
-        }
-
-
-
+condition = mycondition % 9;
 
 var pages = [
      "consent.html",
@@ -655,9 +653,10 @@ function restoreTaskPaneWhenQuestionsClear() {
     }
 }
 
+
 // Workload Scale -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-setInterval(workload, 50000);
+startExperimentInterval(workload, 50000);
 
 var question = ['Rate your workload on a scale of 1-3'];
 
@@ -700,7 +699,7 @@ function workload() {
     $("#id_workload").hide();
     restoreTaskPaneWhenQuestionsClear();
 
-    setTimeout(function () {
+    startExperimentTimeout(function () {
         setWorkloadScreenActive(true);
         $("#id_workload").show();
         $("#id_one").show();
@@ -834,7 +833,7 @@ $("#bag_berth_3").hide(); console.log("video2");
 }}
 ne_silent = silent_questions[randomQuestion_silent];
 //$("#random_silent").html(wh_questions[randomQuestion_wh]);
-silentclear = setTimeout ( function () {
+silentclear = startExperimentTimeout ( function () {
 
 
 psiTurk.recordTrialData({'phase':'SA_silent_question', 'status':silent_questions[randomQuestion_silent]});
@@ -1107,7 +1106,7 @@ function sawareness_silent()
  restoreTaskPaneWhenQuestionsClear();
  $("#SA_Berth1, #SA_Berth2").off("click");
   
- setTimeout(function(){   
+ startExperimentTimeout(function(){
    if (random_video == 0)
     {
     psiTurk.recordTrialData({'phase':'SA_silent_question', 'status':'I think Berth1 is blocked.'});
@@ -1366,7 +1365,7 @@ $("#id_confrmdiv").hide();
 $("#id_block").hide();
 
 
-myfunctionclear=setTimeout(function () {
+myfunctionclear = startExperimentTimeout(function () {
 
 $("#id_confrmdiv").show();
 $("#id_truebtn").show();
@@ -2308,7 +2307,7 @@ setSituationAwarenessScreenActive(false);
 restoreTaskPaneWhenQuestionsClear();
 $("#SA_Berth1, #SA_Berth2").off("click");
 
-setTimeout(function(){  
+startExperimentTimeout(function(){
     
    if (random_video == 0)
     {
@@ -2561,7 +2560,7 @@ $("#random_wh").html(wh_questions[randomQuestion_wh]);
     
 $("#id_wh").hide(); 
 
-whclear=setTimeout(function () {
+whclear = startExperimentTimeout(function () {
 
 if ( wh_questions[randomQuestion_wh] == 'I think Berth1 is blocked. Where you want me to put this bag?') {
 
@@ -3185,7 +3184,7 @@ function sawareness_wh(){
  restoreTaskPaneWhenQuestionsClear();
  $("#SA_Berth1, #SA_Berth2").off("click");
   
- setTimeout(function(){   
+ startExperimentTimeout(function(){
    if (random_video == 0)
     {
     psiTurk.recordTrialData({'phase':'SA_wh_block',  'status':'Berth1 is blocked'});
@@ -3356,149 +3355,90 @@ var n_zero_newgetcode = 0;
 var n_zero_incorrectkeycode = 0;
 
 
-$(document).keypress(function(){
+$(document)
+    .off("keypress.nback")
+    .on("keypress.nback", function(event) {
 
-     $("#anykey").hide()
-     
-     var keycode = event.which || event.keyCode;
-     
-     
+        $("#anykey").hide();
 
-     n_zero_rand_no_zero = Math.floor(Math.random()*10);
-     
-     
-var hexArray = ['lightblue','coral','green', 'yellow', 'blue', 'red', 'lightgreen', 'violet', 'black', 'grey', 'yellowgreen', 'turquoise', 'slateblue', 'saddlebrown', 'orange', 'olive','maroon','hotpink','lime', 'teal', 'indigo','mediumaquamarine','aqua']
+        var keycode = event.which || event.keyCode;
 
-var randomColor = hexArray[Math.floor(Math.random() * hexArray.length)];
+        console.count("N_ZERO_KEYPRESS_HANDLER_EXECUTED");
+        console.log("N_ZERO key:", keycode, "time:", Date.now());
 
-     
-     $("#n_zero_rand_no_zero").html(n_zero_rand_no_zero);
-     $("#n_zero_rand_no_zero").css("color",randomColor);
+        // Get the currently displayed number
+        n_zero_number = "\"" + n_zero_rand_no_zero + "\"";
+        n_zero_get_code = n_zero_number.charCodeAt(1);
 
-     $("#n_zero_nback_zero").html(n_zero_text1);
-         
-    n_zero_number =  "\""+n_zero_rand_no_zero+"\""
-    
-    n_zero_get_code = n_zero_number.charCodeAt(1) 
+        // Store the keypress and displayed number
+        n_zero_arraykeycode.push(keycode);
+        n_zero_arraygetcode.push(n_zero_get_code);
 
-    console.log(n_zero_get_code);
-   // console.log(keycode);
-    n_zero_arraykeycode.push(keycode)
-    n_zero_arraygetcode.push(n_zero_get_code);
-	  
-   for (var i =1; i<n_zero_arraykeycode.length;i++)
-     {
-     n_zero_newkeycode = n_zero_arraykeycode[i];
-    // console.log("array"+arraykeycode[i])
-     }
-     
-     for (var j =0; j<n_zero_arraygetcode.length;j++)
-     {
-     n_zero_newgetcode = n_zero_arraygetcode[j-1];
-    // console.log("array"+arraygetcode[i])
-     }
-     
-    console.log("newkeycode"+n_zero_newkeycode);
-     console.log("newgetcode"+n_zero_newgetcode);
-     
-     n_zero_incorrectkeycode = n_zero_newkeycode
-     
-     if (n_zero_newgetcode==n_zero_newkeycode)
-     {
-     
-     psiTurk.recordTrialData({'phase':'N_zero', 'status':'correct'});
-      console.log("n_zero_correct")
-      if (n_zero_newkeycode == 48) {
-     $("#n_zero_correct").html("You pressed 0" )
-     $("#n_zero_correct").show()
-     $("#n_zero_incorrect").hide()}
-       if (n_zero_newkeycode == 49) {
-     $("#n_zero_correct").html("You pressed 1")
-     $("#n_zero_correct").show()
-     $("#n_zero_incorrect").hide()}
-       if (n_zero_newkeycode == 50) {
-     $("#n_zero_correct").html("You pressed 2")
-     $("#n_zero_correct").show()
-     $("#n_zero_incorrect").hide()}
-     if (n_zero_newkeycode == 51) {
-     $("#n_zero_correct").html("You pressed 3")
-     $("#n_zero_correct").show()
-     $("#n_zero_incorrect").hide()}
-     if (n_zero_newkeycode == 52) {
-     $("#n_zero_correct").html("You pressed 4")
-      $("#n_zero_correct").show()
-     $("#n_zero_incorrect").hide()}
-     if (n_zero_newkeycode == 53) {
-     $("#n_zero_correct").html("You pressed 5")
-      $("#n_zero_correct").show()
-     $("#n_zero_incorrect").hide()}
-     if (n_zero_newkeycode == 54) {
-     $("#n_zero_correct").html("You pressed 6")
-      $("#n_zero_correct").show()
-     $("#n_zero_incorrect").hide()}
-     if (n_zero_newkeycode == 55) {
-     $("#n_zero_correct").html("You pressed 7")
-      $("#n_zero_correct").show()
-     $("#n_zero_incorrect").hide()}
-     if (n_zero_newkeycode == 56) {
-     $("#n_zero_correct").html("You pressed 8")
-      $("#n_zero_correct").show()
-     $("#n_zero_incorrect").hide()}
-     if (n_zero_newkeycode == 57) {
-     $("#n_zero_correct").html("You pressed 9")
-      $("#n_zero_correct").show()
-     $("#n_zero_incorrect").hide()}
-     }
-     
-     if (n_zero_newgetcode!=n_zero_incorrectkeycode)
-     {
-     psiTurk.recordTrialData({'phase':'N_zero', 'status':'incorrect'});
-     console.log("n_zero_incorrect")
-      if (n_zero_incorrectkeycode == 48) {
-     $("#n_zero_incorrect").html("You pressed 0" )
-      $("#n_zero_incorrect").show()
-       $("#n_zero_correct").hide()}
-       if (n_zero_incorrectkeycode == 49) {
-     $("#n_zero_incorrect").html("You pressed 1")
-        $("#n_zero_incorrect").show()
-       $("#n_zero_correct").hide()}
-       if (n_zero_incorrectkeycode == 50) {
-     $("#n_zero_incorrect").html("You pressed 2")
-      $("#n_zero_incorrect").show()
-       $("#n_zero_correct").hide()}
-     if (n_zero_incorrectkeycode == 51) {
-     $("#n_zero_incorrect").html("You pressed 3")
-      $("#n_zero_incorrect").show()
-     $("#n_zero_correct").hide()}
-     if (n_zero_incorrectkeycode == 52) {
-     $("#n_zero_incorrect").html("You pressed 4")
-      $("#n_zero_incorrect").show()
-     $("#n_zero_correct").hide()}
-     if (n_zero_incorrectkeycode == 53) {
-     $("#n_zero_incorrect").html("You pressed 5")
-      $("#n_zero_incorrect").show()
-     $("#n_zero_correct").hide()}
-     if (n_zero_incorrectkeycode == 54) {
-     $("#n_zero_incorrect").html("You pressed 6")
-      $("#n_zero_incorrect").show()
-     $("#n_zero_correct").hide()}
-     if (n_zero_incorrectkeycode == 55) {
-     $("#n_zero_incorrect").html("You pressed 7")
-      $("#n_zero_incorrect").show()
-     $("#n_zero_correct").hide()}
-     if (n_zero_incorrectkeycode == 56) {
-     $("#n_zero_incorrect").html("You pressed 8")
-      $("#n_zero_incorrect").show()
-     $("#n_zero_correct").hide()}
-     if (n_zero_incorrectkeycode == 57) {
-     $("#n_zero_incorrect").html("You pressed 9")
-      $("#n_zero_incorrect").show()
-     $("#n_zero_correct").hide()} 
-     
-     
-     }     
-  });}
+        // Get the most recent keypress and current stimulus
+        n_zero_newkeycode =
+            n_zero_arraykeycode[n_zero_arraykeycode.length - 1];
 
+        n_zero_newgetcode =
+            n_zero_arraygetcode[n_zero_arraygetcode.length - 1];
+
+        console.log("newkeycode: " + n_zero_newkeycode);
+        console.log("newgetcode: " + n_zero_newgetcode);
+
+        // Compare the keypress against the current stimulus
+        if (n_zero_newgetcode == n_zero_newkeycode) {
+
+            psiTurk.recordTrialData({
+                'phase': 'N_zero',
+                'status': 'correct'
+            });
+
+            console.log("n_zero_correct");
+
+            $("#n_zero_correct").html(
+                "You pressed " + String.fromCharCode(n_zero_newkeycode)
+            );
+
+            $("#n_zero_correct").show();
+            $("#n_zero_incorrect").hide();
+
+        } else {
+
+            psiTurk.recordTrialData({
+                'phase': 'N_zero',
+                'status': 'incorrect'
+            });
+
+            console.log("n_zero_incorrect");
+
+            $("#n_zero_incorrect").html(
+                "You pressed " + String.fromCharCode(n_zero_newkeycode)
+            );
+
+            $("#n_zero_incorrect").show();
+            $("#n_zero_correct").hide();
+        }
+
+        // Generate the next stimulus
+        n_zero_rand_no_zero = Math.floor(Math.random() * 10);
+
+        var hexArray = [
+            'lightblue', 'coral', 'green', 'yellow', 'blue',
+            'red', 'lightgreen', 'violet', 'black', 'grey',
+            'yellowgreen', 'turquoise', 'slateblue', 'saddlebrown',
+            'orange', 'olive', 'maroon', 'hotpink', 'lime',
+            'teal', 'indigo', 'mediumaquamarine', 'aqua'
+        ];
+
+        var randomColor =
+            hexArray[Math.floor(Math.random() * hexArray.length)];
+
+        $("#n_zero_rand_no_zero").html(n_zero_rand_no_zero);
+        $("#n_zero_rand_no_zero").css("color", randomColor);
+
+        $("#n_zero_nback_zero").html(n_zero_text1);
+
+    });
+}
 
 if (condition==1 || condition==4 || condition==7)
 
@@ -3517,19 +3457,19 @@ var arraygetcode_one = new Array;
 var newkeycode_one =0;
 var newgetcode_one = 0;
 var incorrect_onekeycode = 0;
-$(document).keypress(function(){
+$(document)
+    .off("keypress.nback")
+    .on("keypress.nback", function(event) {
+    $("#anykey").hide();
 
-      $("#anykey").hide()
-     var keycode = event.which || event.keyCode;
-     
-     rand_no_one = Math.floor(Math.random()*10);
-     
-   var hexArray = ['lightblue','coral','green', 'yellow', 'blue', 'red', 'lightgreen', 'violet', 'black', 'grey', 'yellowgreen', 'turquoise', 'slateblue', 'saddlebrown', 'orange', 'olive','maroon','hotpink','lime', 'teal', 'indigo','mediumaquamarine','aqua']
+    var keycode = event.which || event.keyCode;
 
-var randomColor = hexArray[Math.floor(Math.random() * hexArray.length)];
+    rand_no_one = Math.floor(Math.random() * 10);
 
-          
-         
+    var hexArray = ['lightblue','coral','green', 'yellow', 'blue', 'red', 'lightgreen', 'violet', 'black', 'grey', 'yellowgreen', 'turquoise', 'slateblue', 'saddlebrown', 'orange', 'olive','maroon','hotpink','lime', 'teal', 'indigo','mediumaquamarine','aqua']
+
+    var randomColor = hexArray[Math.floor(Math.random() * hexArray.length)];
+
     number_one =  "\""+rand_no_one+"\""
     
     get_code_one = number_one.charCodeAt(1) 
@@ -3698,16 +3638,19 @@ var newgetcode_two = 0;
 var incorrect_twokeycode = 0;
 
 
-$(document).keypress(function(){
+$(document)
+    .off("keypress.nback")
+    .on("keypress.nback", function(event) {
 
-      $("#anykey").hide()
-     var keycode = event.which || event.keyCode;
-     
-     rand_no_two = Math.floor(Math.random()*10);
-     
+    $("#anykey").hide();
+
+    var keycode = event.which || event.keyCode;
+
+    rand_no_two = Math.floor(Math.random() * 10);
+
    var hexArray = ['lightblue','coral','green', 'yellow', 'blue', 'red', 'lightgreen', 'violet', 'black', 'grey', 'yellowgreen', 'turquoise', 'slateblue', 'saddlebrown', 'orange', 'olive','maroon','hotpink','lime', 'teal', 'indigo','mediumaquamarine','aqua']
 
-var randomColor = hexArray[Math.floor(Math.random() * hexArray.length)];
+   var randomColor = hexArray[Math.floor(Math.random() * hexArray.length)];
 
           
          
@@ -3865,10 +3808,10 @@ if (condition==0)
 
 myFunction();
 sawareness();
-setInterval(myFunction,80000);
+startExperimentInterval(myFunction, 80000);
 clearTimeout(silentclear); 
 clearTimeout(whclear);
-setInterval(sawareness, 100000);
+startExperimentInterval(sawareness, 100000);
 
 }
 
@@ -3880,10 +3823,10 @@ if (condition==1)
 
 myFunction();
 sawareness();
-setInterval(myFunction,80000);
+startExperimentInterval(myFunction, 80000);
 clearTimeout(silentclear); 
 clearTimeout(whclear);
-setInterval(sawareness, 100000);
+startExperimentInterval(sawareness, 100000);
 }
 
 if (condition==2)
@@ -3893,10 +3836,10 @@ if (condition==2)
 
 myFunction();
 sawareness();
-setInterval(myFunction,80000);
+startExperimentInterval(myFunction, 80000);
 clearTimeout(whclear);
 clearTimeout(silentclear); 
-setInterval(sawareness, 100000);
+startExperimentInterval(sawareness, 100000);
 
 }
 
@@ -3909,9 +3852,9 @@ if (condition==3)
 whFunction();
 sawareness_wh();
 clearTimeout(myfunctionclear); 
-setInterval(whFunction,80000);
+startExperimentInterval(whFunction, 80000);
 clearTimeout(silentclear); 
-setInterval(sawareness_wh, 100000);
+startExperimentInterval(sawareness_wh, 100000);
 
 
 }
@@ -3925,9 +3868,9 @@ if (condition==4)
 whFunction();
 sawareness_wh();
 clearTimeout(myfunctionclear); 
-setInterval(whFunction,80000);
+startExperimentInterval(whFunction, 80000);
 clearTimeout(silentclear); 
-setInterval(sawareness_wh, 100000);
+startExperimentInterval(sawareness_wh, 100000);
 
 }
 
@@ -3938,10 +3881,10 @@ if (condition==5)
 
 whFunction();
 sawareness_wh();
-setInterval(whFunction,80000);
+startExperimentInterval(whFunction, 80000);
 clearTimeout(silentclear); 
 clearTimeout(myfunctionclear); 
-setInterval(sawareness_wh, 100000);
+startExperimentInterval(sawareness_wh, 100000);
 }
 
 
@@ -3952,10 +3895,10 @@ if (condition==6)
 
 silentFunction();
 sawareness_silent();
-setInterval(silentFunction,80000);
+startExperimentInterval(silentFunction, 80000);
 clearTimeout(myfunctionclear); 
 clearTimeout(whclear);
-setInterval(sawareness_silent, 100000);
+startExperimentInterval(sawareness_silent, 100000);
 }
 
 if (condition==7)
@@ -3965,10 +3908,10 @@ if (condition==7)
 
 silentFunction();
 sawareness_silent();
-setInterval(silentFunction,80000);
+startExperimentInterval(silentFunction, 80000);
 clearTimeout(myfunctionclear); 
 clearTimeout(whclear);
-setInterval(sawareness_silent, 100000);
+startExperimentInterval(sawareness_silent, 100000);
 }
 
 
@@ -3979,10 +3922,10 @@ if (condition==8)
 
 silentFunction();
 sawareness_silent();
-setInterval(silentFunction,80000);
+startExperimentInterval(silentFunction, 80000);
 clearTimeout(myfunctionclear); 
 clearTimeout(whclear);
-setInterval(sawareness_silent, 100000);
+startExperimentInterval(sawareness_silent, 100000);
 }
 
 
@@ -4020,8 +3963,10 @@ record_responses();
 
 
 var Questionnaire = function() {
+    // Disable N-back keyboard input before the check question
+    stopExperimentTimers();
 
-	psiTurk.finishInstructions();
+    psiTurk.finishInstructions();
     
     var error_message = "<h1>Oops!</h1><p>Something went wrong submitting your information. This might happen if you lose your internet connection. Press the button to resubmit.</p><button id='resubmit'>Resubmit</button>";
 
