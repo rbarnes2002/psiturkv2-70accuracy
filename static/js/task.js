@@ -707,35 +707,47 @@ function workload() {
         $("#id_three").show();
         $("#id_one").trigger("focus");
 
-        $("#id_one").click(function () {
-            psiTurk.recordTrialData({'phase': 'Workload', 'status': 'workload_one'});
-            $("#id_workload").hide();
-            setWorkloadScreenActive(false);
-            $("#question").hide();
-            $("#id_one").hide();
-            $("#id_two").hide();
-            $("#id_three").hide();
-        });
+        $("#id_one")
+            .off("click.workload")
+            .on("click.workload", function () {
+                psiTurk.recordTrialData({
+                    'phase': 'Workload',
+                    'status': 'workload_one'
+                });
 
-        $("#id_two").click(function () {
-            psiTurk.recordTrialData({'phase': 'Workload', 'status': 'workload_two'});
-            $("#id_workload").hide();
-            setWorkloadScreenActive(false);
-            $("#question").hide();
-            $("#id_one").hide();
-            $("#id_two").hide();
-            $("#id_three").hide();
-        });
+                $("#id_workload").hide();
+                setWorkloadScreenActive(false);
+                $("#question").hide();
+                $("#id_one, #id_two, #id_three").hide();
+            });
 
-        $("#id_three").click(function () {
-            psiTurk.recordTrialData({'phase': 'Workload', 'status': 'workload_three'});
-            $("#id_workload").hide();
-            setWorkloadScreenActive(false);
-            $("#question").hide();
-            $("#id_one").hide();
-            $("#id_two").hide();
-            $("#id_three").hide();
-        });
+        $("#id_two")
+            .off("click.workload")
+            .on("click.workload", function () {
+                psiTurk.recordTrialData({
+                    'phase': 'Workload',
+                    'status': 'workload_two'
+                });
+
+                $("#id_workload").hide();
+                setWorkloadScreenActive(false);
+                $("#question").hide();
+                $("#id_one, #id_two, #id_three").hide();
+            });
+
+        $("#id_three")
+            .off("click.workload")
+            .on("click.workload", function () {
+                psiTurk.recordTrialData({
+                    'phase': 'Workload',
+                    'status': 'workload_three'
+                });
+
+                $("#id_workload").hide();
+                setWorkloadScreenActive(false);
+                $("#question").hide();
+                $("#id_one, #id_two, #id_three").hide();
+            });
     }, 25000);
 }
 
@@ -3394,10 +3406,8 @@ $(document)
 
             console.log("n_zero_correct");
 
-            $("#n_zero_correct").html(
-                "You pressed " + String.fromCharCode(n_zero_newkeycode)
-            );
-
+            $("#n_zero_correct").html("You pressed " + String.fromCharCode(n_zero_newkeycode));
+            $("#n_zero_correct").css("color", "green");
             $("#n_zero_correct").show();
             $("#n_zero_incorrect").hide();
 
@@ -3410,10 +3420,8 @@ $(document)
 
             console.log("n_zero_incorrect");
 
-            $("#n_zero_incorrect").html(
-                "You pressed " + String.fromCharCode(n_zero_newkeycode)
-            );
-
+            $("#n_zero_incorrect").html("You pressed " + String.fromCharCode(n_zero_newkeycode));
+            $("#n_zero_correct").css("color", "red");
             $("#n_zero_incorrect").show();
             $("#n_zero_correct").hide();
         }
@@ -3457,6 +3465,7 @@ var arraygetcode_one = new Array;
 var newkeycode_one =0;
 var newgetcode_one = 0;
 var incorrect_onekeycode = 0;
+
 $(document)
     .off("keypress.nback")
     .on("keypress.nback", function(event) {
@@ -3514,103 +3523,47 @@ $(document)
      console.log("newkeycode_one"+newkeycode_one);
      console.log("newgetcode_one"+newgetcode_one);
      
-     incorrect_onekeycode = newkeycode_one
-     
-     if (newgetcode_one==newkeycode_one)
-     {
-     
-     
-     psiTurk.recordTrialData({'phase':'N_one', 'status':'correct'});
-      console.log("correct_one")
-      if (newkeycode_one == 48) {
-     $("#correct_one").html("You pressed 0" )
-     $("#correct_one").show()
-     $("#incorrect_one").hide()}
-       if (newkeycode_one == 49) {
-     $("#correct_one").html("You pressed 1")
-     $("#correct_one").show()
-     $("#incorrect_one").hide()}
-       if (newkeycode_one == 50) {
-     $("#correct_one").html("You pressed 2")
-     $("#correct_one").show()
-     $("#incorrect_one").hide()}
-     if (newkeycode_one == 51) {
-     $("#correct_one").html("You pressed 3")
-     $("#correct_one").show()
-     $("#incorrect_one").hide()}
-     if (newkeycode_one == 52) {
-     $("#correct_one").html("You pressed 4")
-      $("#correct_one").show()
-     $("#incorrect_one").hide()}
-     if (newkeycode_one == 53) {
-     $("#correct_one").html("You pressed 5")
-      $("#correct_one").show()
-     $("#incorrect_one").hide()}
-     if (newkeycode_one == 54) {
-     $("#correct_one").html("You pressed 6")
-      $("#correct_one").show()
-     $("#incorrect_one").hide()}
-     if (newkeycode_one == 55) {
-     $("#correct_one").html("You pressed 7")
-      $("#correct_one").show()
-     $("#incorrect_one").hide()}
-     if (newkeycode_one == 56) {
-     $("#correct_one").html("You pressed 8")
-      $("#correct_one").show()
-     $("#incorrect_one").hide()}
-     if (newkeycode_one == 57) {
-     $("#correct_one").html("You pressed 9")
-      $("#correct_one").show()
-     $("#incorrect_one").hide()}
-     }
-     
-     if (newgetcode_one!=incorrect_onekeycode)
-     {
-     
-     psiTurk.recordTrialData({'phase':'N_one', 'status':'incorrect'});
-     console.log("incorrect_one")
-      if (incorrect_onekeycode == 48) {
-     $("#incorrect_one").html("You pressed 0" )
-      $("#incorrect_one").show()
-       $("#correct_one").hide()}
-       if (incorrect_onekeycode == 49) {
-     $("#incorrect_one").html("You pressed 1")
-        $("#incorrect_one").show()
-       $("#correct_one").hide()}
-       if (incorrect_onekeycode == 50) {
-     $("#incorrect_one").html("You pressed 2")
-      $("#incorrect_one").show()
-       $("#correct_one").hide()}
-     if (incorrect_onekeycode == 51) {
-     $("#incorrect_one").html("You pressed 3")
-      $("#incorrect_one").show()
-     $("#correct_one").hide()}
-     if (incorrect_onekeycode == 52) {
-     $("#incorrect_one").html("You pressed 4")
-      $("#incorrect_one").show()
-     $("#correct_one").hide()}
-     if (incorrect_onekeycode == 53) {
-     $("#incorrect_one").html("You pressed 5")
-      $("#incorrect_one").show()
-     $("#correct_one").hide()}
-     if (incorrect_onekeycode == 54) {
-     $("#incorrect_one").html("You pressed 6")
-      $("#incorrect_one").show()
-     $("#correct_one").hide()}
-     if (incorrect_onekeycode == 55) {
-     $("#incorrect_one").html("You pressed 7")
-      $("#incorrect_one").show()
-     $("#correct_one").hide()}
-     if (incorrect_onekeycode == 56) {
-     $("#incorrect_one").html("You pressed 8")
-      $("#incorrect_one").show()
-     $("#correct_one").hide()}
-     if (incorrect_onekeycode == 57) {
-     $("#incorrect_one").html("You pressed 9")
-      $("#incorrect_one").show()
-     $("#correct_one").hide()}    
-     
-     }
+     // N-one warm-up: do not score the first two inputs
+        if (arraygetcode_one.length < 3) {
+
+            $("#correct_one").hide();
+            $("#incorrect_one").hide();
+
+            console.log("N_one warm-up: " + arraygetcode_one.length + "/2");
+
+        } else {
+
+            incorrect_onekeycode = newkeycode_one;
+
+            if (newgetcode_one == newkeycode_one) {
+
+                psiTurk.recordTrialData({
+                    'phase': 'N_one',
+                    'status': 'correct'
+                });
+
+                console.log("correct_one");
+
+                $("#correct_one").html("You pressed " + String.fromCharCode(newkeycode_one));
+                $("#correct_one").css("color", "green");
+                $("#correct_one").show();
+                $("#incorrect_one").hide();
+
+            } else {
+
+                psiTurk.recordTrialData({
+                    'phase': 'N_one',
+                    'status': 'incorrect'
+                });
+
+                console.log("incorrect_one");
+
+                $("#incorrect_one").html("You pressed " + String.fromCharCode(newkeycode_one));
+                $("#incorrect_one").css("color", "red");
+                $("#incorrect_one").show();
+                $("#correct_one").hide();
+            }
+        }
   });
 
 
@@ -3694,104 +3647,51 @@ $(document)
       $("#presenter_two").hide()}
      
      
-     console.log("newkeycode_two"+newkeycode_two);
-     console.log("newgetcode_two"+newgetcode_two);
-     
-     incorrect_twokeycode = newkeycode_two
-     
-     if (newgetcode_two==newkeycode_two)
-     {
-     
-     psiTurk.recordTrialData({'phase':'N_two', 'status':'correct'});
-      console.log("correct_two")
-      if (newkeycode_two == 48) {
-     $("#correct_two").html("You pressed 0" )
-     $("#correct_two").show()
-     $("#incorrect_two").hide()}
-       if (newkeycode_two == 49) {
-     $("#correct_two").html("You pressed 1")
-     $("#correct_two").show()
-     $("#incorrect_two").hide()}
-       if (newkeycode_two == 50) {
-     $("#correct_two").html("You pressed 2")
-     $("#correct_two").show()
-     $("#incorrect_two").hide()}
-     if (newkeycode_two == 51) {
-     $("#correct_two").html("You pressed 3")
-     $("#correct_two").show()
-     $("#incorrect_two").hide()}
-     if (newkeycode_two == 52) {
-     $("#correct_two").html("You pressed 4")
-      $("#correct_two").show()
-     $("#incorrect_two").hide()}
-     if (newkeycode_two == 53) {
-     $("#correct_two").html("You pressed 5")
-      $("#correct_two").show()
-     $("#incorrect_two").hide()}
-     if (newkeycode_two == 54) {
-     $("#correct_two").html("You pressed 6")
-      $("#correct_two").show()
-     $("#incorrect_two").hide()}
-     if (newkeycode_two == 55) {
-     $("#correct_two").html("You pressed 7")
-      $("#correct_two").show()
-     $("#incorrect_two").hide()}
-     if (newkeycode_two == 56) {
-     $("#correct_two").html("You pressed 8")
-      $("#correct_two").show()
-     $("#incorrect_two").hide()}
-     if (newkeycode_two == 57) {
-     $("#correct_two").html("You pressed 9")
-      $("#correct_two").show()
-     $("#incorrect_two").hide()}
-     }
-     
-     if (newgetcode_two!=incorrect_twokeycode)
-     {
-     psiTurk.recordTrialData({'phase':'N_two', 'status':'incorrect'});
-     console.log("incorrect_two")
-      if (incorrect_twokeycode == 48) {
-     $("#incorrect_two").html("You pressed 0" )
-      $("#incorrect_two").show()
-       $("#correct_two").hide()}
-       if (incorrect_twokeycode == 49) {
-     $("#incorrect_two").html("You pressed 1")
-        $("#incorrect_two").show()
-       $("#correct_two").hide()}
-       if (incorrect_twokeycode == 50) {
-     $("#incorrect_two").html("You pressed 2")
-      $("#incorrect_two").show()
-       $("#correct_two").hide()}
-     if (incorrect_twokeycode == 51) {
-     $("#incorrect_two").html("You pressed 3")
-      $("#incorrect_two").show()
-     $("#correct_two").hide()}
-     if (incorrect_twokeycode == 52) {
-     $("#incorrect_two").html("You pressed 4")
-      $("#incorrect_two").show()
-     $("#correct_two").hide()}
-     if (incorrect_twokeycode == 53) {
-     $("#incorrect_two").html("You pressed 5")
-      $("#incorrect_two").show()
-     $("#correct_two").hide()}
-     if (incorrect_twokeycode == 54) {
-     $("#incorrect_two").html("You pressed 6")
-      $("#incorrect_two").show()
-     $("#correct_two").hide()}
-     if (incorrect_twokeycode == 55) {
-     $("#incorrect_two").html("You pressed 7")
-      $("#incorrect_two").show()
-     $("#correct_two").hide()}
-     if (incorrect_twokeycode == 56) {
-     $("#incorrect_two").html("You pressed 8")
-      $("#incorrect_two").show()
-     $("#correct_two").hide()}
-     if (incorrect_twokeycode == 57) {
-     $("#incorrect_two").html("You pressed 9")
-      $("#incorrect_two").show()
-     $("#correct_two").hide()}    
-     
-     }
+     // Only begin scoring after the first three warm-up inputs.
+    if (arraygetcode_two.length >= 4) {
+
+        console.log("newkeycode_two"+newkeycode_two);
+        console.log("newgetcode_two"+newgetcode_two);
+
+        incorrect_twokeycode = newkeycode_two;
+
+        if (newgetcode_two == newkeycode_two) {
+
+            psiTurk.recordTrialData({
+                'phase': 'N_two',
+                'status': 'correct'
+            });
+
+            console.log("correct_two");
+
+            $("#correct_two").html("You pressed " + String.fromCharCode(newkeycode_two));
+            $("#correct_two").css("color", "green");
+            $("#correct_two").show();
+            $("#incorrect_two").hide();
+
+        } else {
+
+            psiTurk.recordTrialData({
+                'phase': 'N_two',
+                'status': 'incorrect'
+            });
+
+            console.log("incorrect_two");
+
+            $("#incorrect_two").html("You pressed " + String.fromCharCode(newkeycode_two));
+            $("#correct_two").css("color", "red");
+            $("#incorrect_two").show();
+            $("#correct_two").hide();
+        }
+
+    } else {
+
+        // Warm-up: do not record a correct or incorrect response.
+        $("#correct_two").hide();
+        $("#incorrect_two").hide();
+
+        console.log("N_two warm-up: " + arraygetcode_two.length + "/3");
+    }
   });
 
 
@@ -4038,7 +3938,7 @@ var FinalQuestion = function() {
 
     record_responses = function() {
 
-      psiTurk.recordTrialData({'phase':'checkquestion', 'status':'submit'});
+      psiTurk.recordTrialData({'phase':'finalquestion', 'status':'submit'});
 
       psiTurk.recordUnstructuredData('Open_Response_Robot', document.getElementById("openresponse1").value);
 
@@ -4066,7 +3966,7 @@ var FinalQuestion = function() {
 
     psiTurk.showPage('postquestionaire.html');
     window.scrollTo(0, 0);
-    psiTurk.recordTrialData({'phase':'checkquestion', 'status':'begin'});
+    psiTurk.recordTrialData({'phase':'finalquestion', 'status':'begin'});
 
   var r1, r2 = false;
 
