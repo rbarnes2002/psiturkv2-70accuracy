@@ -3421,7 +3421,7 @@ $(document)
             console.log("n_zero_incorrect");
 
             $("#n_zero_incorrect").html("You pressed " + String.fromCharCode(n_zero_newkeycode));
-            $("#n_zero_correct").css("color", "red");
+            $("#n_zero_incorrect").css("color", "red");
             $("#n_zero_incorrect").show();
             $("#n_zero_correct").hide();
         }
